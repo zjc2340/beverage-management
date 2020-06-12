@@ -29,10 +29,7 @@ export default {
           this.$message({
             message: "恭喜你，登录成功",
             type: "success"
-          });
-          // setTimeout(() => {
-          //   this.$router.push('/index/home')
-          // }, 1500);
+          })
           this.$router.push('/index/home')
           localStorage.setItem("id", res.data.id);
           localStorage.setItem("token", res.data.token);

@@ -55,9 +55,6 @@
     </el-table>
     <el-dialog title="收货地址" :visible.sync="editData">
       <el-form :model="newData">
-        <el-form-item label="商品id" :label-width="formLabelWidth">
-          <el-input v-model="newData.id" autocomplete="off" disabled></el-input>
-        </el-form-item>
         <el-form-item label="商品名称" :label-width="formLabelWidth">
           <el-input v-model="newData.name" autocomplete="off"></el-input>
         </el-form-item>

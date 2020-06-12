@@ -4,7 +4,7 @@
       <span>时间范围</span>
       <div class="block">
         <el-date-picker
-          v-model="date"
+          v-model="mountedDate"
           type="datetimerange"
           value-format="yyyy-MM-dd HH:mm:ss"
           start-placeholder="开始日期"
@@ -26,13 +26,16 @@ export default {
     return {
       date: "",
       orderTime:[],
-      orderAmount:[]
+      orderAmount:[],
+      mountedDate:["2020-06-01 00:00:00","2020-06-04 23:59:59"]
     };
   },
   methods: {
     query() {
-      this.date = JSON.stringify(this.date);
-      API_ORDER_ORDERTOTAL(this.date).then(res => {
+      console.log(JSON.stringify(this.mountedDate));
+      this.orderTime = []
+      this.orderAmount = []
+      API_ORDER_ORDERTOTAL(JSON.stringify(this.mountedDate)).then(res => {
         this.chartData = res.data.data;
         res.data.data.forEach(item=>{
           this.orderTime.push(new Date(item.orderTime).toJSON().substr(0,19).replace("T"," "))
@@ -91,6 +94,19 @@ export default {
       };
       myCharts.setOption(option);
     }
+  },
+  mounted() {
+    console.log(JSON.stringify(this.mountedDate));
+    
+    API_ORDER_ORDERTOTAL(JSON.stringify(this.mountedDate)).then(res => {
+        this.chartData = res.data.data;
+        res.data.data.forEach(item=>{
+          this.orderTime.push(new Date(item.orderTime).toJSON().substr(0,19).replace("T"," "))
+          this.orderAmount.push(item.orderAmount)
+        })
+        this.drawLine();
+      });
+    
   },
 };
 </script>

@@ -79,13 +79,11 @@ router.beforeEach((to,from,next)=>{
     if(to.path!="/"){
         API_CHECK_TOKEN(localStorage.token).then(res=>{
             if(res.data.code == 0){
-                next()
-                console.log(from.path);
-                // if(to.meta.role.includes(localStorage.role)){
-                //     next()
-                // }else{
-                //     next(from.path)
-                // }
+                if(to.meta.role.includes(localStorage.role)){
+                    next()
+                }else{
+                    next(from)
+                }
             }else{
                 next('/')
             }

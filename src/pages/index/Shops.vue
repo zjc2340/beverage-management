@@ -104,16 +104,14 @@ export default {
   methods: {
     getList(){
       API_SHOP_INFO().then(res => {
+      this.newImg = res.data.data.avatar
       this.shopsData = res.data.data;
       this.shopsData.avatar = this.imgUrl + this.shopsData.avatar;
       this.checkList = res.data.data.supports
-      let listarray = res.data.data.pics;
-      listarray.forEach(item => {
-        let obj = {
-          url: this.imgUrl + item
-        };
-        this.fileList.push(obj);
-      });
+      this.pics = res.data.data.pics
+      this.fileList = this.pics.map(item=>{
+        return {url: this.imgUrl + item}
+      })
     });
     },
     // 修改
@@ -132,28 +130,21 @@ export default {
         }
       });
     },
-    handleRemove(file, fileList) {
-      this.fileArray = []; //初始化我装图片地址的容器，（我需要传给后端的）
-      fileList.forEach(item => {
-        try {
-          this.fileArray.push(item.response.result); //这是还没有上传到服务器的时候，移除某一个图片的
-        } catch (e) {
-          //当抛出异常时的处理
-          this.fileArray.push(item.url); //回显之后，移除某一个图片
-        }
-      });
-    },
     portrait(res, file) {
       this.shopsData.avatar = URL.createObjectURL(file.raw);
       this.newImg = res.imgUrl;
     },
-    shopsImg(res, file, fileList) {
-      console.log(fileList);
-      this.pics.push(res.imgUrl);
-      console.log(this.pics);
-      
+    shopsImg(res) {
+      this.pics.push(res.imgUrl)
     },
-
+    handleRemove(file) {
+      // 获取/的索引
+      let index = file.url.lastIndexOf('/')
+      // 从/开始截取文件名
+      let url = file.url.substr(index+1,file.url.length-1)
+      // 删除pics中包含文件名的索引
+      this.pics.splice(this.pics.indexOf(url),1)  
+    },
   },
   created() {
     this.getList()
