@@ -20,7 +20,7 @@
               <span>{{ props.row.price }}</span>
             </el-form-item>
             <el-form-item label="商品图片">
-              <img :src="props.row.imgUrl" alt />
+              <img :src="imgUrl+props.row.imgUrl" alt />
             </el-form-item>
             <el-form-item label="创建时间">
               <span>{{new Date(props.row.ctime).toJSON().substr(0,19).replace("T"," ")}}</span>
@@ -42,7 +42,7 @@
       <el-table-column label="商品价格" prop="price"></el-table-column>
       <el-table-column label="商品图片">
         <template slot-scope="props">
-          <img :src="props.row.imgUrl" alt />
+          <img :src="imgUrl+props.row.imgUrl" alt />
         </template>
       </el-table-column>
       <el-table-column label="商品描述" prop="goodsDesc"></el-table-column>
@@ -59,7 +59,7 @@
           <el-input v-model="newData.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="商品分类" :label-width="formLabelWidth">
-          <el-select v-model="newData.value" placeholder="请选择商品分类">
+          <el-select v-model="category_value" placeholder="请选择商品分类">
             <el-option v-for="item in newData.category" :key="item.index" :value="item.cateName"></el-option>
           </el-select>
         </el-form-item>
@@ -69,11 +69,11 @@
         <el-form-item label="商品图片" :label-width="formLabelWidth">
           <el-upload
             class="avatar-uploader"
-            action="http://127.0.0.1:5000/goods/goods_img_upload"
+            :action="imgUpload"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
           >
-            <img v-if="newData.imgUrl" :src="newData.imgUrl" class="avatar" />
+            <img v-if="newData.imgUrl" :src="imgUrl+newData.imgUrl" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
@@ -104,12 +104,15 @@ import {
   API_GOODS_LIST,
   API_GOODS_DEL,
   API_GOODS_CATEGROIES,
-  API_GOODS_EDIT
+  API_GOODS_EDIT,
+  SERVE_GOODS_IMG,
+  SERVE_GOODS_UPLOAD
 } from "../../../api/apis";
 export default {
   data() {
     return {
-      imgUrl: "http://127.0.0.1:5000/upload/imgs/goods_img/",
+      imgUrl: SERVE_GOODS_IMG,
+      imgUpload:SERVE_GOODS_UPLOAD,
       currentPage: 1,
       pageSize: 5,
       total: 0,
@@ -123,8 +126,8 @@ export default {
         imgUrl: "",
         goodsDesc: "",
         id: "",
-        value: ""
-      }
+      },
+      category_value:""
     };
   },
   methods: {
@@ -133,10 +136,10 @@ export default {
       API_GOODS_LIST(this.currentPage, this.pageSize).then(res => {
         this.tableData = res.data.data;
         this.total = res.data.total;
-        this.tableData.forEach((element, index) => {
-          this.tableData[index].imgUrl =
-          this.imgUrl + this.tableData[index].imgUrl;
-        });
+        // this.tableData.forEach((element, index) => {
+        //   this.tableData[index].imgUrl =
+        //   this.imgUrl + this.tableData[index].imgUrl;
+        // });
       });
     },
     // 编辑
@@ -147,7 +150,6 @@ export default {
       this.editData = true;
       this.newData.id = row.id;
       this.newData.name = row.name;
-      this.newData.value = row.category;
       this.newData.price = row.price;
       this.newData.imgUrl = row.imgUrl;
       this.newData.goodsDesc = row.goodsDesc;
@@ -155,7 +157,9 @@ export default {
     // 修改
     alterEdit(){
       this.editData = false
-      API_GOODS_EDIT(this.newData.name,this.newData.value,this.newData.price,this.newImg,this.newData.goodsDesc,this.newData.id).then(res=>{
+      let newData = {...this.newData}
+      newData.category = this.category_value
+      API_GOODS_EDIT(newData).then(res=>{
         if(res.data.code == 0){
           this.getList()
         }
@@ -163,8 +167,7 @@ export default {
     },
     handleAvatarSuccess(res, file) {
       this.newData.imgUrl = URL.createObjectURL(file.raw);
-      this.newImg = res.imgUrl;
-      console.log(this.newImg);
+      this.newData.imgUrl = res.imgUrl;
     },
     // 删除
     Delete(id) {

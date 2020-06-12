@@ -25,7 +25,7 @@
         <img :src="infoList.imgUrl" alt />
         <el-upload
           class="avatar-uploader"
-          action="http://127.0.0.1:5000/users/avatar_upload"
+          :action="imgUpload"
           :data="upload"
           :on-success="handleAvatarSuccess"
           :show-file-list="false"
@@ -39,10 +39,11 @@
 </template>
 
 <script>
-import { API_USER_ACCINFO } from "@/api/apis.js";
+import { API_USER_ACCINFO,SERVE_USERS_UPLOAD } from "@/api/apis.js";
 export default {
   data() {
     return {
+      imgUpload:SERVE_USERS_UPLOAD,
       dialogVisible: false,
       infoList: {},
       imageUrl: "",

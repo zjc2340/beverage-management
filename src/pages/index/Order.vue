@@ -228,8 +228,11 @@ export default {
     },
     // 修改订单-确定
     editSub() {
-      let {id,orderNo,orderTime,phone,consignee,deliverAddress,deliveryTime,remarks,orderAmount,orderState} = this.editData;
-      API_ORDER_EDIT(id,orderNo,orderTime,phone,consignee,deliverAddress,deliveryTime,remarks,orderAmount,orderState).then(res=>{
+      
+      let newData = {...this.editData}
+      API_ORDER_EDIT(newData).then(res=>{
+        console.log(res.data);
+        
         if(res.data.code == 0) this.getList()
         this.editFlag = false
       })

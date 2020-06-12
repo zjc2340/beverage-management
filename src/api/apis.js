@@ -1,5 +1,19 @@
 import axios from "axios"
-axios.defaults.baseURL = "http://localhost:5000"
+axios.defaults.baseURL = "http://127.0.0.1:5000"
+const SERVEIP = "http://127.0.0.1:5000"
+// 店铺图片上传接口
+export const SERVE_SHOP_UPLOAD = SERVEIP+"/shop/upload"
+// 用户头像上传接口
+export const SERVE_USERS_UPLOAD = SERVEIP+"/users/avatar_upload"
+// 商品图片上传接口
+export const SERVE_GOODS_UPLOAD = SERVEIP+"/goods/goods_img_upload"
+// 店铺图片路径
+export const SERVE_SHOP_IMG = SERVEIP+"/upload/shop/"
+// 用户图片路径
+export const SERVE_USER_IMG = SERVEIP+"/upload/imgs/acc_img/"
+// 商品图片路径
+export const SERVE_GOODS_IMG = SERVEIP+"/upload/imgs/goods_img/"
+
 // 一、登录
 // account：账号
 // password：密码
@@ -81,7 +95,7 @@ export const API_GOODS_DEL = (id) => axios.get("/goods/del", {params: {id}})
 // imgUrl：商品图片地址
 // goodsDesc：商品描述
 // id：商品ID
-export const API_GOODS_EDIT = (name,category,price,imgUrl,goodsDesc,id)=>axios.post("/goods/edit",{name,category,price,imgUrl,goodsDesc,id})
+export const API_GOODS_EDIT = (params)=>axios.post("/goods/edit",params)
 // 二十二、获取订单列表
 // currentPage：当前页
 // pageSize：每页显示的数据条数
@@ -114,7 +128,7 @@ export const API_ORDER_DETAIL = (id) => axios.get("/order/detail", {params: {id}
 // remarks：备注
 // orderAmount：订单金额
 // orderState：订单状态
-export const API_ORDER_EDIT = (id,orderNo,orderTime,phone,consignee,deliverAddress,deliveryTime,remarks,orderAmount,orderState) => axios.post("/order/edit", {id,orderNo,orderTime,phone,consignee,deliverAddress,deliveryTime,remarks,orderAmount,orderState})
+export const API_ORDER_EDIT = (params) => axios.post("/order/edit", params)
 // 二十六、获取店铺详情
 export const API_SHOP_INFO =()=>axios.get("/shop/info")
 // 二十七、店铺图片上传
@@ -131,7 +145,7 @@ export const API_SHOP_UPLOAD = ()=>axios.post("/shop/upload")
 // sellCount：店铺销量
 // supports：活动支持
 // date：营业时间
-export const API_SHOP_EDIT = (id,name,bulletin,avatar,deliveryPrice,deliveryTime,description,score,sellCount,supports,pics,date)=>axios.post("/shop/edit",{id,name,bulletin,avatar,deliveryPrice,deliveryTime,description,score,sellCount,supports,pics,date})
+export const API_SHOP_EDIT = (params)=>axios.post("/shop/edit",params)
 // 二十九、首页报表统计
 export const API_HOME_TOTALDATA = () => axios.get("/order/totaldata")
 // 三十、订单报表统计

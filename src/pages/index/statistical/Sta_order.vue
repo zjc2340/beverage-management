@@ -32,7 +32,6 @@ export default {
   },
   methods: {
     query() {
-      console.log(JSON.stringify(this.mountedDate));
       this.orderTime = []
       this.orderAmount = []
       API_ORDER_ORDERTOTAL(JSON.stringify(this.mountedDate)).then(res => {
@@ -96,8 +95,6 @@ export default {
     }
   },
   mounted() {
-    console.log(JSON.stringify(this.mountedDate));
-    
     API_ORDER_ORDERTOTAL(JSON.stringify(this.mountedDate)).then(res => {
         this.chartData = res.data.data;
         res.data.data.forEach(item=>{

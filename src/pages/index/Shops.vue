@@ -19,17 +19,17 @@
         <el-form-item label="店铺头像" class="img">
           <el-upload
             class="avatar-uploader"
-            action="http://127.0.0.1:5000/shop/upload"
+            :action="shopUpload"
             :show-file-list="false"
             :on-success="portrait"
           >
-            <img v-if="shopsData.avatar" :src="shopsData.avatar" width="150" class="avatar" />
+            <img v-if="shopsData.avatar" :src="imgUrl+shopsData.avatar" width="150" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
         <el-form-item label="店铺图片">
           <el-upload
-            action="http://127.0.0.1:5000/shop/upload"
+            :action="shopUpload"
             list-type="picture-card"
             :on-success="shopsImg"
             :on-remove="handleRemove"
@@ -85,15 +85,14 @@
 </template>
 <script>
 
-import { API_SHOP_INFO, API_SHOP_EDIT} from "../../api/apis";
+import { API_SHOP_INFO, API_SHOP_EDIT,SERVE_SHOP_UPLOAD,SERVE_SHOP_IMG} from "../../api/apis";
 export default {
   data() {
     return {
-      imgUrl: "http://127.0.0.1:5000/upload/shop/",
-      upImg: "",
+      imgUrl: SERVE_SHOP_IMG,//店铺图片路径
+      shopUpload:SERVE_SHOP_UPLOAD,//店铺图片上传接口
       disabled: true,
       editFlag: false,
-      dialogVisible: false,
       fileList: [],
       checkList: [],
       supports:["单人精彩套餐","VC无限橙果汁全场8折","在线支付满28减5","特价饮品8折抢购"],
@@ -104,9 +103,9 @@ export default {
   methods: {
     getList(){
       API_SHOP_INFO().then(res => {
-      this.newImg = res.data.data.avatar
+      // this.newImg = res.data.data.avatar
       this.shopsData = res.data.data;
-      this.shopsData.avatar = this.imgUrl + this.shopsData.avatar;
+      // this.shopsData.avatar = this.imgUrl + this.shopsData.avatar;
       this.checkList = res.data.data.supports
       this.pics = res.data.data.pics
       this.fileList = this.pics.map(item=>{
@@ -121,18 +120,21 @@ export default {
     },
     // 完成
     save() {
-      let {id,name,bulletin,deliveryPrice,deliveryTime,description,score,sellCount,date} = this.shopsData 
-      API_SHOP_EDIT(id,name,bulletin,this.newImg,deliveryPrice,deliveryTime,description,score,sellCount,JSON.stringify(this.checkList),JSON.stringify(this.pics),JSON.stringify(date)).then(res => {
+      let newData = {...this.shopsData}
+      newData.supports = JSON.stringify(this.checkList)
+      newData.date = JSON.stringify(this.shopsData.date)
+      newData.pics = JSON.stringify(this.pics)
+      API_SHOP_EDIT(newData).then(res => {
         if (res.data.code == 0) {
           this.disabled = true;
           this.editFlag = false;
           this.getList()
         }
-      });
+      })  
     },
     portrait(res, file) {
       this.shopsData.avatar = URL.createObjectURL(file.raw);
-      this.newImg = res.imgUrl;
+      this.shopsData.avatar = res.imgUrl;
     },
     shopsImg(res) {
       this.pics.push(res.imgUrl)
